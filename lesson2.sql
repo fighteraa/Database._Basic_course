@@ -77,14 +77,16 @@ DROP TABLE IF EXISTS `_cities`;
  SET character_set_client = utf8mb4 ;
 CREATE TABLE `_cities` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `country_id` int(11) DEFAULT NULL,
+  `country_id` int(11) NOT NULL,
   `important` tinyint(1) NOT NULL,
   `region_id` int(11) NOT NULL,
-  `title` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title_city` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
+  KEY `city_dep_regdg1` (`region_id`),
   KEY `city_dep_reg` (`country_id`),
-  CONSTRAINT `city_dep_reg` FOREIGN KEY (`country_id`) REFERENCES ` _regions` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  CONSTRAINT `city_dep_reg` FOREIGN KEY (`country_id`) REFERENCES ` _countries` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `city_dep_regdg1` FOREIGN KEY (`region_id`) REFERENCES ` _regions` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=eucjpms;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,7 +95,7 @@ CREATE TABLE `_cities` (
 
 LOCK TABLES `_cities` WRITE;
 /*!40000 ALTER TABLE `_cities` DISABLE KEYS */;
-INSERT INTO `_cities` VALUES (1,NULL,0,0,'Октябрьское'),(2,NULL,0,0,'Аша'),(3,NULL,0,0,'Абай'),(4,NULL,0,0,'Успенка'),(5,NULL,0,0,'Логойск'),(6,NULL,0,0,'Столин');
+INSERT INTO `_cities` VALUES (1,1,1,1,'Октябрьское'),(2,1,1,2,'Аша'),(3,2,1,3,'Абай'),(4,2,1,4,'Успенка'),(5,3,1,5,'Логойск'),(6,3,1,6,'Столин');
 /*!40000 ALTER TABLE `_cities` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -131,4 +133,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-07-07 23:40:16
+-- Dump completed on 2019-07-10 20:47:21
