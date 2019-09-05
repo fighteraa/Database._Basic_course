@@ -1,0 +1,56 @@
+RENAME TABLE `country_s` TO ` _countries`;
+
+RENAME TABLE `region_s` TO ` _regions`;
+
+RENAME TABLE `city_s` TO `_cities`;
+
+ALTER TABLE `_countries`
+RENAME COLUMN `idcountry_s` TO `id`,
+RENAME COLUMN `country_scol` TO `title`;
+
+ALTER TABLE `_countries`
+MODIFY  `title` VARCHAR(150) NOT NULL,
+ADD INDEX(`title`);
+
+
+ALTER TABLE `_regions`
+RENAME COLUMN `idregion_s` TO `id`,
+RENAME COLUMN `region_scol` TO `title`,
+ADD COLUMN `country_id` INT AFTER `id`;
+
+ALTER TABLE `_regions`
+MODIFY  `title` VARCHAR(150) NOT NULL,
+ADD INDEX(`title`);
+
+ALTER TABLE `_regions`
+MODIFY  `country_id` INT NOT NULL;
+
+ALTER TABLE `_regions`
+ADD CONSTRAINT `country_dep` FOREIGN KEY (`country_id`)
+REFERENCES `country_s`(`id`);
+
+
+ALTER TABLE `_cities`
+RENAME COLUMN `idnew_table` TO `id`,
+
+RENAME COLUMN `new_tablecol` TO `title`,
+
+ADD COLUMN `country_id` INT NOT NULL AFTER `id`,
+
+ADD COLUMN `important` TINYINT(1) NOT NULL AFTER `country_id`,
+
+ADD COLUMN `region_id` INT NOT NULL AFTER `important`;
+
+ALTER TABLE `_cities`
+
+MODIFY  `title` VARCHAR(150) NOT NULL;
+
+ALTER TABLE `_cities`
+
+ADD CONSTRAINT `city_dep_reg`
+FOREIGN KEY (`region_id`) REFERENCES  ` _regions`(`id`);
+
+ALTER TABLE `_cities`
+
+ADD CONSTRAINT `city_dep_contry`
+FOREIGN KEY (`country_id`) REFERENCES  `_countries`(`id`);
