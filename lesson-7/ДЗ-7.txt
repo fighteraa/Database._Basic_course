@@ -1,0 +1,9 @@
+CREATE USER IF NOT EXISTS 'user1'@'%' IDENTIFIED WITH mysql_native_password BY '123123';
+
+GRAND SELECT, DELETE, UPDATE, INSERT ON `city_and_country`.* TO 'user1'@'%';
+
+FLUSH PRIVILEGES;
+
+mysqldump -u root -p123123 city_and_country --routines > /var/backup/back_`data` '%Y-%m-%d'.sql
+
+mysql - root -p123123 city_and_country < /var/backup/2019-07-25.sql
