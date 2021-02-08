@@ -1,0 +1,70 @@
+1. Создать VIEW на основе запросов, которые вы сделали в ДЗ к уроку 3.
+
+CREATE VIEW `avg_salary` AS 
+SELECT `depart`.`name` AS `Название отдела`, AVG(`salary`) AS `Средняя з/п в отделе` 
+FROM `shtat` 
+RIGHT JOIN `depart` ON `shtat`.`dept` = `depart`.`id`
+GROUP BY `depart`.`name`;
+
+SELECT * FROM  `avg_salary`;
+
+CREATE VIEW `sum_salary_from_dept` AS 
+
+SELECT `depart`.`name` AS `Название отдела`, 
+COUNT(`dept`) AS `Количество сотрудников`,
+SUM(`salary`) AS `Всего денег в отделе` 
+FROM `shtat` 
+RIGHT JOIN `depart` ON `shtat`.`dept` = `depart`.`id`
+GROUP BY `depart`.`name`;
+
+SELECT * FROM  `sum_salary_from_dept`;
+
+2. Создать функцию, которая найдет менеджера по имени и фамилии.
+CREATE FUNCTION `find_manager_2` (name_person VARCHAR(25), lastname_person VARCHAR(30))
+RETURNS INT DETERMINISTIC
+READS SQL DATA
+RETURN(SELECT `id` FROM `shtat` WHERE `name` = name_person AND `lastname` = lastname_person);
+
+SELECT `find_manager_2` ('Антон', 'Полонников');
+
+# И ради интереса решил написать процедуру. 
+
+delimiter $$
+
+CREATE PROCEDURE `proc_find_manager` (name_person VARCHAR(25), lastname_person VARCHAR(30))
+BEGIN
+SELECT `id`, `position`, `salary` 
+FROM `shtat` WHERE `name` = name_person AND `lastname` = lastname_person;
+END$$
+
+delimiter ;
+
+CALL `proc_find_manager` ('Мария', 'Музыка');
+
+#В данном случае, можно было и без delimiter, но я решил с ним потренироваться.
+
+3. Создать триггер, который при добавлении нового сотрудника будет выплачивать ему вступительный бонус, 
+занося запись об этом в таблицу salary.
+
+CREATE TABLE IF NOT EXISTS `salary` (
+`id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+`bonus` INT UNSIGNED DEFAULT 0,
+CONSTRAINT `bonus_salary`
+FOREIGN KEY (`id`) REFERENCES  `shtat`(`id`)
+);
+
+#Вступительный бонус равен фиксированному значению
+CREATE TRIGGER `trig1`
+AFTER INSERT ON `shtat`
+FOR EACH ROW
+INSERT INTO `salary` (`id`, `bonus`) VALUES (NEW.id, 5000);
+
+#Удалил первый триггер
+DROP TRIGGER IF EXISTS `staff`.`trig1`
+
+#Вступительный бонус равен одному окладу
+CREATE TRIGGER `trig2`
+AFTER INSERT ON `shtat`
+FOR EACH ROW
+INSERT INTO `salary` (`id`, `bonus`) 
+VALUES (NEW.id, (SELECT `salary` FROM `shtat` WHERE `id` = NEW.id));
